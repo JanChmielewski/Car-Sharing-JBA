@@ -2,14 +2,12 @@ package carsharing.service.managerService;
 
 import carsharing.db.DatabaseManager;
 import carsharing.db.entity.Company;
-
-import java.util.Scanner;
+import carsharing.service.UI;
 
 public class CompanyCreator {
-    public void createCompany(DatabaseManager databaseManager) {
-        System.out.println("Enter the company name:");
-        Scanner scanner = new Scanner(System.in);
-        String companyName = scanner.nextLine();
+    public void createCompany(DatabaseManager databaseManager, UI ui) {
+        ui.displayMessage("Enter the company name:");
+        String companyName = ui.getAnswer();
         databaseManager.addCompany(new Company(companyName));
     }
 }

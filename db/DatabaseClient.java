@@ -1,5 +1,6 @@
 package carsharing.db;
 
+import carsharing.db.entity.Car;
 import carsharing.db.entity.Company;
 
 import javax.sql.DataSource;
@@ -14,6 +15,16 @@ public class DatabaseClient {
         this.dataSource = dataSource;
     }
 
+    public void insert(String query) throws SQLException {
+        try (Connection con = dataSource.getConnection();
+             Statement statement = con.createStatement()) {
+            statement.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     public void run(String str) throws SQLException {
         try (Connection con = dataSource.getConnection();
              Statement statement = con.createStatement()) {
@@ -24,7 +35,7 @@ public class DatabaseClient {
         }
     }
 
-    public Company select(String query) {
+    public Company selectName(String query) throws SQLException {
         try (Connection con = dataSource.getConnection();
              Statement statement = con.createStatement();
              ResultSet resultSetItem = statement.executeQuery(query)) {
@@ -33,11 +44,12 @@ public class DatabaseClient {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
         return null;
     }
 
-    public List<Company> selectForList(String query) {
+    public List<Company> selectCompaniesForList(String query) {
         List<Company> companies = new ArrayList<>();
         try (Connection con = dataSource.getConnection();
              Statement statement = con.createStatement();
@@ -49,5 +61,33 @@ public class DatabaseClient {
             e.printStackTrace();
         }
         return companies;
+    }
+
+    public List<Car> selectCarsForList(String querry) {
+        List<Car> cars = new ArrayList<>();
+        try (Connection con = dataSource.getConnection();
+             Statement statement = con.createStatement();
+             ResultSet resultSetItem = statement.executeQuery(querry)) {
+            while (resultSetItem.next()) {
+                cars.add(new Car(resultSetItem.getString("NAME"), resultSetItem.getInt("COMPANY_ID")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cars;
+    }
+
+    public int selectID(String query) throws SQLException {
+        try (Connection con = dataSource.getConnection();
+             Statement statement = con.createStatement();
+             ResultSet resultSetItem = statement.executeQuery(query)) {
+            if (resultSetItem.next()) {
+                return resultSetItem.getInt("ID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return -1;
     }
 }

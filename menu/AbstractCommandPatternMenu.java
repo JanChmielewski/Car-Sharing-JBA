@@ -5,6 +5,7 @@ import carsharing.menu.options.MenuOption;
 import carsharing.service.UI;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public abstract class AbstractCommandPatternMenu {
@@ -18,11 +19,9 @@ public abstract class AbstractCommandPatternMenu {
 
     public void showMenu() {
         while (true) {
-            List<String> options = new java.util.ArrayList<>(getOptions().stream()
-                    .map(MenuOption::description)
-                    .toList());
-            options.add(getBackOption());
-            ui.displayMenu(options);
+            AtomicInteger counter = new AtomicInteger(1);
+            getOptions().forEach(option -> System.out.printf("%d. %s%n", counter.getAndIncrement(), option.description()));
+            System.out.printf("%d. %s%n", 0, getBackOption());
 
             int choice = ui.getUserChoice();
             if (choice == 0) {

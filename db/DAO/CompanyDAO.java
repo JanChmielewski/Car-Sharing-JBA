@@ -1,4 +1,4 @@
-package carsharing.db;
+package carsharing.db.DAO;
 
 import carsharing.db.entity.Company;
 
@@ -10,4 +10,5 @@ public interface CompanyDAO {
     void addCompany(Company company);
     void updateCompany(Company company);
     void deleteCompany(int id);
+    int getCompanyIdByName(String name);
 }

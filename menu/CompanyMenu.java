@@ -18,8 +18,8 @@ public class CompanyMenu extends AbstractCommandPatternMenu {
         this.options = new ArrayList<>();
         ui.displayMessage(String.format("'%s' company:", companyName));
         options.addAll(List.of(
-                new ShowCarsListOption(),
-                new CreateCarOption()
+                new ShowCarsListOption(companyName),
+                new CreateCarOption(companyName)
         ));
 
     }

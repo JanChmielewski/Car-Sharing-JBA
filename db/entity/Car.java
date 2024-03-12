@@ -34,4 +34,9 @@ public class Car {
     public void setCompanyId(int companyId) {
         this.companyId = companyId;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

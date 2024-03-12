@@ -8,7 +8,7 @@ import carsharing.service.managerService.CompanyCreator;
 public class CreateCompanyOption implements MenuOption {
     @Override
     public void execute(DatabaseManager databaseManager, UI ui) {
-        new CompanyCreator().createCompany(databaseManager);
+        new CompanyCreator().createCompany(databaseManager, ui);
     }
 
     @Override

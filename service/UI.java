@@ -11,7 +11,11 @@ public class UI {
     }
 
     public String getAnswer() {
-        return scanner.nextLine();
+        String input = scanner.nextLine();
+        while (input.isEmpty()) {
+            input = scanner.nextLine().trim();
+        }
+        return input;
     }
 
     public void displayMessage(String message) {

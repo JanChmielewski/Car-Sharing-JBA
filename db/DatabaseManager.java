@@ -1,5 +1,8 @@
 package carsharing.db;
 
+import carsharing.db.DAO.CarDAO;
+import carsharing.db.DAO.CompanyDAO;
+import carsharing.db.entity.Car;
 import carsharing.db.entity.Company;
 import org.h2.jdbcx.JdbcDataSource;
 
@@ -7,25 +10,35 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class DatabaseManager implements CompanyDAO {
+public class DatabaseManager implements CompanyDAO, CarDAO {
 
     private final DatabaseClient dbClient;
 
     private static final String CREATE_COMPANY = "CREATE TABLE IF NOT EXISTS COMPANY (" +
-            "ID int AUTO_INCREMENT, " +
-            "NAME VARCHAR(255) UNIQUE NOT NULL, " +
-            "PRIMARY KEY (ID))";
+            "ID int AUTO_INCREMENT(1) PRIMARY KEY, " +
+            "NAME VARCHAR(255) UNIQUE NOT NULL" +
+            ");";
     private static final String CREATE_CAR = "CREATE TABLE IF NOT EXISTS CAR (" +
-            "ID int AUTO_INCREMENT, " +
+            "ID int AUTO_INCREMENT(1), " +
             "NAME VARCHAR(255) UNIQUE NOT NULL, " +
             "COMPANY_ID int NOT NULL, " +
             "PRIMARY KEY (ID), " +
-            "FOREIGN KEY (COMPANY_ID) REFERENCES COMPANY(ID))";
+            "FOREIGN KEY (COMPANY_ID) REFERENCES COMPANY(ID)" +
+            ");";
     private static final String SELECT_COMPANIES = "SELECT * FROM COMPANY";
     private static final String SELECT_COMPANY_BY_ID = "SELECT * FROM COMPANY WHERE ID = %d";
     private static final String UPDATE_COMPANY = "UPDATE COMPANY SET NAME = '%s' WHERE ID = %d";
     private static final String DELETE_COMPANY = "DELETE FROM COMPANY WHERE ID = %d";
     private static final String INSERT_COMPANY = "INSERT INTO COMPANY (NAME) VALUES ('%s')";
+    private static final String SELECT_COMPANY_ID = "SELECT ID FROM COMPANY WHERE NAME = '%s'";
+
+    private static final String SELECT_CARS = "SELECT * FROM CAR";
+    private static final String SELECT_CARS_BY_COMPANY = "SELECT * FROM CAR WHERE COMPANY_ID = %d";
+    private static final String SELECT_CAR_BY_ID = "SELECT * FROM CAR WHERE ID = %d";
+    private static final String SELECT_CARS_BY_COMPANY_ID = "SELECT * FROM CAR WHERE COMPANY_ID = %d";
+    private static final String UPDATE_CAR = "UPDATE CAR SET NAME = '%s' WHERE ID = %d";
+    private static final String DELETE_CAR = "DELETE FROM CAR WHERE ID = %d";
+    private static final String INSERT_CAR = "INSERT INTO CAR (NAME, COMPANY_ID) VALUES ('%s', %d)";
 
     public DatabaseManager(Connection connection) throws SQLException {
         JdbcDataSource dataSource = new JdbcDataSource();
@@ -42,12 +55,17 @@ public class DatabaseManager implements CompanyDAO {
 
     @Override
     public List<Company> getCompanies() {
-        return dbClient.selectForList(SELECT_COMPANIES);
+        return dbClient.selectCompaniesForList(SELECT_COMPANIES);
     }
 
     @Override
     public Company getCompanyById(int id) {
-        Company company = dbClient.select(String.format(SELECT_COMPANY_BY_ID, id));
+        Company company;
+        try {
+            company = dbClient.selectName(String.format(SELECT_COMPANY_BY_ID, id));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         if (company != null) {
             System.out.println("Company name: " + company.getName());
@@ -89,6 +107,52 @@ public class DatabaseManager implements CompanyDAO {
         } catch (SQLException e) {
             System.out.println("Error deleting company." + e.getMessage());
         }
+    }
+
+    @Override
+    public int getCompanyIdByName(String companyName) {
+        try {
+            return dbClient.selectID(String.format(SELECT_COMPANY_ID, companyName));
+        } catch (SQLException e) {
+            System.out.println("Error getting company ID." + e.getMessage());
+            throw new RuntimeException("Error getting company ID." + e.getMessage());
+        }
+    }
+
+    @Override
+    public void addCar(String carName, int companyId) {
+        try {
+            dbClient.insert(String.format(
+                    INSERT_CAR, carName, companyId));
+            System.out.println("The car was created!");
+        } catch (SQLException e) {
+            System.out.println("Error adding car." + e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteCar(int id) {
+
+    }
+
+    @Override
+    public List<Car> getCars() {
+        return dbClient.selectCarsForList(SELECT_CARS);
+    }
+
+    @Override
+    public Car getCarById(int id) {
+        return null;
+    }
+
+    @Override
+    public List<Car> getCarsByCompanyId(int companyId) {
+        return dbClient.selectCarsForList(String.format(SELECT_CARS_BY_COMPANY_ID, companyId));
+    }
+
+    @Override
+    public void updateCar(Car car) {
+
     }
 }
 
