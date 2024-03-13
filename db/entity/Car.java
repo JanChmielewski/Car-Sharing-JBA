@@ -10,6 +10,12 @@ public class Car {
         this.companyId = companyId;
     }
 
+    public Car(int id, String name, int companyID) {
+        this.id = id;
+        this.name = name;
+        this.companyId = companyID;
+    }
+
 
     public int getId() {
         return id;
@@ -31,8 +37,8 @@ public class Car {
         return companyId;
     }
 
-    public void setCompanyId(int companyId) {
-        this.companyId = companyId;
+    public int getID() {
+        return id;
     }
 
     @Override

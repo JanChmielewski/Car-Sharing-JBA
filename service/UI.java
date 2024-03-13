@@ -26,12 +26,6 @@ public class UI {
         System.err.println(error);
     }
 
-    public void displayMenu(List<String> options) {
-        for (int i = 0; i < options.size(); i++) {
-            System.out.println((i + 1) + ". " + options.get(i));
-        }
-    }
-
     public void displayList(String message, List<?> listToDisplay) {
         System.out.println(message);
         for (int i = 0; i < listToDisplay.size(); i++) {

@@ -13,16 +13,16 @@ public class CompanyMenu extends AbstractCommandPatternMenu {
 
     private final List<MenuOption> options;
 
-    public CompanyMenu(String companyName, DatabaseManager databaseManager, UI ui) {
+    public CompanyMenu(String companyName, int companyId, DatabaseManager databaseManager, UI ui) {
         super(databaseManager);
         this.options = new ArrayList<>();
         ui.displayMessage(String.format("'%s' company:", companyName));
         options.addAll(List.of(
-                new ShowCarsListOption(companyName),
-                new CreateCarOption(companyName)
+                new ShowCarsListOption(companyId),
+                new CreateCarOption(companyId)
         ));
-
     }
+
     @Override
     protected List<MenuOption> getOptions() {
         return options;

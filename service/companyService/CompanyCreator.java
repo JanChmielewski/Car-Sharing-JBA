@@ -8,6 +8,8 @@ public class CompanyCreator {
     public void createCompany(DatabaseManager databaseManager, UI ui) {
         ui.displayMessage("Enter the company name:");
         String companyName = ui.getAnswer();
-        databaseManager.addCompany(new Company(companyName));
+        Company company = new Company(companyName);
+        company.setId(databaseManager.getCompanies().size() + 1);
+        databaseManager.addCompany(company);
     }
 }

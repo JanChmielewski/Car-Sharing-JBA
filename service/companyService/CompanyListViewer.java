@@ -19,7 +19,7 @@ public class CompanyListViewer {
             }
             Company chosenCompany = companyManager.getCompanyById(choice);
             if (chosenCompany != null) {
-                new CompanyMenu(chosenCompany.getName(), companyManager, ui).showMenu();
+                new CompanyMenu(chosenCompany.getName(), chosenCompany.getId(), companyManager, ui).showMenu();
             } else {
                 ui.displayMessage("No such company!");
             }

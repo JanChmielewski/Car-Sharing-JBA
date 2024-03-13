@@ -1,15 +1,15 @@
 package carsharing.menu.options.customerOptions;
 
-import carsharing.db.DatabaseManager;
 
+import carsharing.db.DatabaseManager;
 import carsharing.menu.options.MenuOption;
 import carsharing.service.UI;
-import carsharing.service.customerService.CustomerListViewer;
+import carsharing.service.customerService.CustomerLogger;
 
 public class CustomerLoginOption implements MenuOption {
     @Override
     public void execute(DatabaseManager databaseManager, UI ui) {
-        new CustomerListViewer().showCustomerListAndChoose(databaseManager, ui);
+        new CustomerLogger().login(databaseManager, ui);
     }
 
     @Override

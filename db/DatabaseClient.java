@@ -20,8 +20,7 @@ public class DatabaseClient {
     }
 
     public void insert(String query) throws SQLException {
-        try (Connection con = dataSource.getConnection();
-             Statement statement = con.createStatement()) {
+        try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement()) {
             statement.executeUpdate(query);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -29,9 +28,17 @@ public class DatabaseClient {
         }
     }
 
+    public void update(String querry) throws SQLException {
+        try (Statement stmt = dataSource.getConnection().createStatement()) {
+            stmt.executeUpdate(querry);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
     public void run(String str) throws SQLException {
-        try (Connection con = dataSource.getConnection();
-             Statement statement = con.createStatement()) {
+        try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement()) {
             statement.executeUpdate(str);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -40,9 +47,7 @@ public class DatabaseClient {
     }
 
     public Company selectName(String query) throws SQLException {
-        try (Connection con = dataSource.getConnection();
-             Statement statement = con.createStatement();
-             ResultSet resultSetItem = statement.executeQuery(query)) {
+        try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement(); ResultSet resultSetItem = statement.executeQuery(query)) {
             if (resultSetItem.next()) {
                 return new Company(resultSetItem.getString("NAME"));
             }
@@ -55,9 +60,7 @@ public class DatabaseClient {
 
     public List<Company> selectCompaniesForList(String query) {
         List<Company> companies = new ArrayList<>();
-        try (Connection con = dataSource.getConnection();
-             Statement statement = con.createStatement();
-             ResultSet resultSetItem = statement.executeQuery(query)) {
+        try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement(); ResultSet resultSetItem = statement.executeQuery(query)) {
             while (resultSetItem.next()) {
                 companies.add(new Company(resultSetItem.getString("NAME")));
             }
@@ -67,13 +70,11 @@ public class DatabaseClient {
         return companies;
     }
 
-    public List<Car> selectCarsForList(String querry) {
+    public List<Car> selectCarsForList(String query) {
         List<Car> cars = new ArrayList<>();
-        try (Connection con = dataSource.getConnection();
-             Statement statement = con.createStatement();
-             ResultSet resultSetItem = statement.executeQuery(querry)) {
+        try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement(); ResultSet resultSetItem = statement.executeQuery(query)) {
             while (resultSetItem.next()) {
-                cars.add(new Car(resultSetItem.getString("NAME"), resultSetItem.getInt("COMPANY_ID")));
+                cars.add(new Car(resultSetItem.getInt("ID"), resultSetItem.getString("NAME"), resultSetItem.getInt("COMPANY_ID")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -82,9 +83,7 @@ public class DatabaseClient {
     }
 
     public int selectID(String query) throws SQLException {
-        try (Connection con = dataSource.getConnection();
-             Statement statement = con.createStatement();
-             ResultSet resultSetItem = statement.executeQuery(query)) {
+        try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement(); ResultSet resultSetItem = statement.executeQuery(query)) {
             if (resultSetItem.next()) {
                 return resultSetItem.getInt("ID");
             }
@@ -97,9 +96,7 @@ public class DatabaseClient {
 
     public List<Customer> selectCustomersForList(String selectCustomers) {
         List<Customer> customers = new ArrayList<>();
-        try (Connection con = dataSource.getConnection();
-             Statement statement = con.createStatement();
-             ResultSet resultSetItem = statement.executeQuery(selectCustomers)) {
+        try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement(); ResultSet resultSetItem = statement.executeQuery(selectCustomers)) {
             while (resultSetItem.next()) {
                 customers.add(new Customer(resultSetItem.getString("NAME")));
             }
@@ -107,5 +104,29 @@ public class DatabaseClient {
             e.printStackTrace();
         }
         return customers;
+    }
+
+    public Customer selectCustomer(String query) throws SQLException {
+        try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement(); ResultSet resultSet = statement.executeQuery(query)) {
+            if (resultSet.next()) {
+                return new Customer(resultSet.getInt("ID"), resultSet.getString("NAME"), resultSet.getInt("RENTED_CAR_ID"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return null;
+    }
+
+    public Car selectCar(String query) throws SQLException {
+        try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement(); ResultSet resultSetItem = statement.executeQuery(query)) {
+            if (resultSetItem.next()) {
+                return new Car(resultSetItem.getInt("ID"), resultSetItem.getString("NAME"), resultSetItem.getInt("COMPANY_ID"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return null;
     }
 }

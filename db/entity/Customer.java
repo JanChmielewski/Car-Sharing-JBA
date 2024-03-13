@@ -1,13 +1,19 @@
 package carsharing.db.entity;
 
 public class Customer {
-    int id;
-    String name;
-    int rentedCarId;
+    private int id;
+    private String name;
+    private Integer rentedCarID;
+
+    public Customer(int id, String name, int rentedCarID) {
+        this.id = id;
+        this.name = name;
+        this.rentedCarID = rentedCarID;
+    }
 
     public Customer(String name) {
         this.name = name;
-    } //
+    }
 
     public int getId() {
         return id;
@@ -25,11 +31,12 @@ public class Customer {
         this.name = name;
     }
 
-    public int getRentedCarId() {
-        return rentedCarId;
+    public Integer getRentedCarID() {
+        return rentedCarID;
     }
 
-    public void setRentedCarId(int rentedCarId) {
-        this.rentedCarId = rentedCarId;
+    public void setRentedCarID(Integer rentedCarID) {
+        this.rentedCarID = rentedCarID;
     }
+
 }

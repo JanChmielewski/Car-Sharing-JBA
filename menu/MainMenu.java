@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainMenu extends AbstractCommandPatternMenu {
-
     private final List<MenuOption> options;
 
     public MainMenu(DatabaseManager databaseManager) {

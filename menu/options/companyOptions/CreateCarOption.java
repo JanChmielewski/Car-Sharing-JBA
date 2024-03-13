@@ -7,15 +7,15 @@ import carsharing.service.companyService.CarCreator;
 
 public class CreateCarOption implements MenuOption {
 
-    private final String companyName;
+    private final int companyId;
 
-    public CreateCarOption(String companyName) {
-        this.companyName = companyName;
+    public CreateCarOption(int companyId) {
+        this.companyId = companyId;
     }
 
     @Override
     public void execute(DatabaseManager databaseManager, UI ui) {
-        new CarCreator().createCar(databaseManager, ui, companyName);
+        new CarCreator().createCar(databaseManager, ui, companyId);
     }
 
     @Override

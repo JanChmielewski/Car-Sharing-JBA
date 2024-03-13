@@ -1,14 +1,16 @@
 package carsharing.db.DAO;
 
 import carsharing.db.entity.Car;
+import carsharing.db.entity.Company;
 
 import java.util.List;
 
 public interface CarDAO {
-    void addCar(String carName, int companyId);
-    void deleteCar(int id);
-    List<Car> getCars();
-    Car getCarById(int id);
-    List<Car> getCarsByCompanyId(int companyId);
+    void addCar(Car car);
+    List<Car> getCarsById(int companyId);
+    List<Car> getAllCars();
+    List<Car> getRentedCars();
     void updateCar(Car car);
+    Company getCompanyByCarId(int carId);
+    Car getCarById(int id);
 }
