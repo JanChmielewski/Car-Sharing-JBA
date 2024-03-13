@@ -3,7 +3,7 @@ package carsharing.menu.options.managerOptions;
 import carsharing.db.DatabaseManager;
 import carsharing.menu.options.MenuOption;
 import carsharing.service.UI;
-import carsharing.service.managerService.CompanyListViewer;
+import carsharing.service.companyService.CompanyListViewer;
 
 public class ShowAndChooseCompanyListOption implements MenuOption {
     @Override

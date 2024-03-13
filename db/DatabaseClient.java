@@ -2,9 +2,13 @@ package carsharing.db;
 
 import carsharing.db.entity.Car;
 import carsharing.db.entity.Company;
+import carsharing.db.entity.Customer;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,5 +93,19 @@ public class DatabaseClient {
             throw e;
         }
         return -1;
+    }
+
+    public List<Customer> selectCustomersForList(String selectCustomers) {
+        List<Customer> customers = new ArrayList<>();
+        try (Connection con = dataSource.getConnection();
+             Statement statement = con.createStatement();
+             ResultSet resultSetItem = statement.executeQuery(selectCustomers)) {
+            while (resultSetItem.next()) {
+                customers.add(new Customer(resultSetItem.getString("NAME")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
     }
 }

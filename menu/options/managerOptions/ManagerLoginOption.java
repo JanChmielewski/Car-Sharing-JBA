@@ -1,7 +1,8 @@
-package carsharing.menu.options;
+package carsharing.menu.options.managerOptions;
 
 import carsharing.db.DatabaseManager;
 import carsharing.menu.ManagerMenu;
+import carsharing.menu.options.MenuOption;
 import carsharing.service.UI;
 
 public class ManagerLoginOption implements MenuOption {

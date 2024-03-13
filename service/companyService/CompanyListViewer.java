@@ -1,4 +1,4 @@
-package carsharing.service.managerService;
+package carsharing.service.companyService;
 
 import carsharing.db.DatabaseManager;
 import carsharing.db.entity.Company;

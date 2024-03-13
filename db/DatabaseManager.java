@@ -2,15 +2,17 @@ package carsharing.db;
 
 import carsharing.db.DAO.CarDAO;
 import carsharing.db.DAO.CompanyDAO;
+import carsharing.db.DAO.CustomerDAO;
 import carsharing.db.entity.Car;
 import carsharing.db.entity.Company;
+import carsharing.db.entity.Customer;
 import org.h2.jdbcx.JdbcDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class DatabaseManager implements CompanyDAO, CarDAO {
+public class DatabaseManager implements CompanyDAO, CarDAO, CustomerDAO {
 
     private final DatabaseClient dbClient;
 
@@ -24,6 +26,11 @@ public class DatabaseManager implements CompanyDAO, CarDAO {
             "COMPANY_ID int NOT NULL, " +
             "PRIMARY KEY (ID), " +
             "FOREIGN KEY (COMPANY_ID) REFERENCES COMPANY(ID)" +
+            ");";
+    private static final String CREATE_CUSTOMER = "CREATE TABLE IF NOT EXISTS CUSTOMER (" +
+            "ID int AUTO_INCREMENT(1) PRIMARY KEY, " +
+            "NAME VARCHAR(255) UNIQUE NOT NULL, " +
+            "RENTED_CAR_ID int DEFAULT NULL" +
             ");";
     private static final String SELECT_COMPANIES = "SELECT * FROM COMPANY";
     private static final String SELECT_COMPANY_BY_ID = "SELECT * FROM COMPANY WHERE ID = %d";
@@ -39,6 +46,15 @@ public class DatabaseManager implements CompanyDAO, CarDAO {
     private static final String UPDATE_CAR = "UPDATE CAR SET NAME = '%s' WHERE ID = %d";
     private static final String DELETE_CAR = "DELETE FROM CAR WHERE ID = %d";
     private static final String INSERT_CAR = "INSERT INTO CAR (NAME, COMPANY_ID) VALUES ('%s', %d)";
+    private static final String SELECT_CUSTOMER_ID = "SELECT ID FROM CUSTOMER WHERE NAME = '%s'";
+    private static final String SELECT_CUSTOMERS = "SELECT * FROM CUSTOMER";
+    private static final String SELECT_CUSTOMER_BY_ID = "SELECT * FROM CUSTOMER WHERE ID = %d";
+    private static final String UPDATE_CUSTOMER = "UPDATE CUSTOMER SET NAME = '%s' WHERE ID = %d";
+    private static final String DELETE_CUSTOMER = "DELETE FROM CUSTOMER WHERE ID = %d";
+    private static final String INSERT_CUSTOMER = "INSERT INTO CUSTOMER (NAME) VALUES ('%s')";
+    private static final String SELECT_CUSTOMER_ID_BY_NAME = "SELECT ID FROM CUSTOMER WHERE NAME = '%s'";
+    private static final String SELECT_CUSTOMER_RENTED_CAR = "SELECT RENTED_CAR_ID FROM CUSTOMER WHERE ID = %d";
+    private static final String UPDATE_CUSTOMER_RENTED_CAR = "UPDATE CUSTOMER SET RENTED_CAR_ID = %d WHERE ID = %d";
 
     public DatabaseManager(Connection connection) throws SQLException {
         JdbcDataSource dataSource = new JdbcDataSource();
@@ -153,6 +169,42 @@ public class DatabaseManager implements CompanyDAO, CarDAO {
     @Override
     public void updateCar(Car car) {
 
+    }
+
+    @Override
+    public List<Customer> getCustomers() {
+        return dbClient.selectCustomersForList(SELECT_CUSTOMERS);
+    }
+
+    @Override
+    public Customer getCustomerById(int id) {
+        return null;
+    }
+
+    @Override
+    public void addCustomer(Customer customer) {
+        try {
+            dbClient.run(String.format(
+                    INSERT_CUSTOMER, customer.getName()));
+            System.out.println("The customer was created!");
+        } catch (SQLException e) {
+            System.out.println("Error adding customer." + e.getMessage());
+        }
+    }
+
+    @Override
+    public void updateCustomer(Customer customer) {
+
+    }
+
+    @Override
+    public void deleteCustomer(int id) {
+
+    }
+
+    @Override
+    public int getCustomerIdByName(String name) {
+        return 0;
     }
 }
 
