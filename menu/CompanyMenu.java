@@ -16,7 +16,7 @@ public class CompanyMenu extends AbstractCommandPatternMenu {
     public CompanyMenu(String companyName, int companyId, DatabaseManager databaseManager, UI ui) {
         super(databaseManager);
         this.options = new ArrayList<>();
-        ui.displayMessage(String.format("'%s' company:", companyName));
+        ui.displayMessage(String.format("'%s' company: with ID %d", companyName, companyId));
         options.addAll(List.of(
                 new ShowCarsListOption(companyId),
                 new CreateCarOption(companyId)

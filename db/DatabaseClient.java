@@ -5,11 +5,9 @@ import carsharing.db.entity.Company;
 import carsharing.db.entity.Customer;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DatabaseClient {
@@ -28,9 +26,16 @@ public class DatabaseClient {
         }
     }
 
-    public void update(String querry) throws SQLException {
-        try (Statement stmt = dataSource.getConnection().createStatement()) {
-            stmt.executeUpdate(querry);
+    public void update(String query, Object... params) throws SQLException {
+        try (Connection con = dataSource.getConnection(); PreparedStatement statement = con.prepareStatement(query)) {
+            for (int i = 0; i < params.length; i++) {
+                statement.setObject(i + 1, params[i]);
+            }
+            System.out.println("Executing query: " + query); // Print the SQL query
+            System.out.println("With parameters: " + Arrays.toString(params)); // Print the parameters
+            int rowsAffected = statement.executeUpdate();
+            System.out.println("Rows affected: " + rowsAffected); // Print the number of rows affected
+            con.commit();
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
@@ -98,7 +103,7 @@ public class DatabaseClient {
         List<Customer> customers = new ArrayList<>();
         try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement(); ResultSet resultSetItem = statement.executeQuery(selectCustomers)) {
             while (resultSetItem.next()) {
-                customers.add(new Customer(resultSetItem.getString("NAME")));
+                customers.add(new Customer(resultSetItem.getInt("ID"), resultSetItem.getString("NAME"), resultSetItem.getInt("RENTED_CAR_ID")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -122,6 +127,18 @@ public class DatabaseClient {
         try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement(); ResultSet resultSetItem = statement.executeQuery(query)) {
             if (resultSetItem.next()) {
                 return new Car(resultSetItem.getInt("ID"), resultSetItem.getString("NAME"), resultSetItem.getInt("COMPANY_ID"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return null;
+    }
+
+    public Company selectCompany(String query) throws SQLException {
+        try (Connection con = dataSource.getConnection(); Statement statement = con.createStatement(); ResultSet resultSetItem = statement.executeQuery(query)) {
+            if (resultSetItem.next()) {
+                return new Company(resultSetItem.getInt("ID"), resultSetItem.getString("NAME"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

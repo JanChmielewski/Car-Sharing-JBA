@@ -39,4 +39,8 @@ public class Customer {
         this.rentedCarID = rentedCarID;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }

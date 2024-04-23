@@ -4,6 +4,7 @@ import carsharing.db.DatabaseManager;
 import carsharing.db.entity.Customer;
 import carsharing.menu.options.MenuOption;
 import carsharing.menu.options.customerOptions.MyRentedCarOption;
+import carsharing.menu.options.customerOptions.RentCarOption;
 import carsharing.menu.options.customerOptions.ReturnCarOption;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class CustomerMenu extends AbstractCommandPatternMenu {
         super(databaseManager);
         this.options = new ArrayList<>();
         options.addAll(List.of(
-                new RentCarOption(customer), // TODO: Implement RentCarOption (only left)
+                new RentCarOption(customer),
                 new ReturnCarOption(customer),
                 new MyRentedCarOption(customer)
         ));

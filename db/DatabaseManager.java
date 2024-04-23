@@ -34,7 +34,7 @@ public class DatabaseManager implements CompanyDAO, CarDAO, CustomerDAO {
             "FOREIGN KEY (RENTED_CAR_ID) REFERENCES CAR(ID)" +
             ");";
 
-    private static final String SELECT_COMPANIES = "SELECT * FROM COMPANY";
+    private static final String SELECT_COMPANIES = "SELECT * FROM COMPANY ORDER BY ID";
     private static final String SELECT_COMPANY_BY_ID = "SELECT * FROM COMPANY WHERE ID = %d";
     private static final String UPDATE_COMPANY = "UPDATE COMPANY SET NAME = '%s' WHERE ID = %d";
     private static final String DELETE_COMPANY = "DELETE FROM COMPANY WHERE ID = %d";
@@ -43,14 +43,11 @@ public class DatabaseManager implements CompanyDAO, CarDAO, CustomerDAO {
     private static final String SELECT_CARS = "SELECT * FROM CAR";
     private static final String SELECT_CAR_BY_ID = "SELECT * FROM CAR WHERE ID = %d";
     private static final String SELECT_CARS_BY_COMPANY_ID = "SELECT * FROM CAR WHERE COMPANY_ID = %d";
-    private static final String RENT_CAR = "UPDATE CUSTOMER SET RENTED_CAR_ID = %d WHERE ID = %d";
     private static final String INSERT_CAR = "INSERT INTO CAR (NAME, COMPANY_ID) VALUES ('%s', %d)";
-    private static final String RETURN_CAR = "UPDATE CUSTOMER SET RENTED_CAR_ID = NULL WHERE ID = %d";
-    private static final String SELECT_RENTED_CARS = "SELECT * FROM CAR WHERE ID IN (SELECT RENTED_CAR_ID FROM CUSTOMER WHERE RENTED_CAR_ID IS NOT NULL)";
     private static final String INSERT_CUSTOMER = "INSERT INTO CUSTOMER (NAME) VALUES ('%s')";
     private static final String SELECT_CUSTOMERS = "SELECT * FROM CUSTOMER";
     private static final String SELECT_CUSTOMER_BY_ID = "SELECT * FROM CUSTOMER WHERE ID = %d";
-    private static final String UPDATE_CUSTOMERS_RENTED_CAR_ID = "UPDATE CUSTOMER SET RENTED_CAR_ID = %d WHERE ID = %d";
+    private static final String UPDATE_CUSTOMERS_RENTED_CAR_ID = "UPDATE CUSTOMER SET RENTED_CAR_ID = ? WHERE ID = ?";
 
     public DatabaseManager(Connection connection) throws SQLException {
         JdbcDataSource dataSource = new JdbcDataSource();
@@ -75,7 +72,7 @@ public class DatabaseManager implements CompanyDAO, CarDAO, CustomerDAO {
     public Company getCompanyById(int id) {
         Company company;
         try {
-            company = dbClient.selectName(String.format(SELECT_COMPANY_BY_ID, id));
+            company = dbClient.selectCompany(String.format(SELECT_COMPANY_BY_ID, id));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -151,25 +148,16 @@ public class DatabaseManager implements CompanyDAO, CarDAO, CustomerDAO {
         return dbClient.selectCarsForList(String.format(SELECT_CARS_BY_COMPANY_ID, companyId));
     }
 
-    @Override
-    public List<Car> getAllCars() {
-        return dbClient.selectCarsForList(SELECT_CARS);
+    public List<Car> getAvailableCars(int companyID) {
+        String query = String.format("SELECT * FROM CAR WHERE COMPANY_ID = %d AND ID NOT IN (SELECT RENTED_CAR_ID FROM CUSTOMER WHERE RENTED_CAR_ID IS NOT NULL)", companyID);
+        return dbClient.selectCarsForList(query);
     }
 
     @Override
-    public List<Car> getRentedCars() {
-        return dbClient.selectCarsForList(SELECT_RENTED_CARS);
-    }
-
-    @Override
-    public void updateCar(Car car) {
-
-    }
-
-    @Override
-    public Company getCompanyByCarId(int carId) {
+    public void rentCar(Customer customer, Car chosenCar) {
         try {
-            return getCompanyById(dbClient.selectID(String.format(SELECT_CAR_BY_ID, carId)));
+            dbClient.update(UPDATE_CUSTOMERS_RENTED_CAR_ID, chosenCar.getId(), customer.getId());
+            customer.setRentedCarID(chosenCar.getId());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -184,13 +172,10 @@ public class DatabaseManager implements CompanyDAO, CarDAO, CustomerDAO {
             throw new RuntimeException(e);
         }
 
-        if (car != null) {
-            System.out.println("Car name: " + car.getName());
-            return car;
-        } else {
+        if (car == null) {
             System.out.println("The car with this ID does not exist.");
-            return null;
         }
+        return car;
     }
 
     @Override
@@ -218,11 +203,21 @@ public class DatabaseManager implements CompanyDAO, CarDAO, CustomerDAO {
 
     @Override
     public void updateCustomersRentedCarId(Customer customer) {
+        System.out.println("Customer: " + customer.getName() + " Customer ID: " + customer.getId() + " Rented car ID: " + customer.getRentedCarID());
         String query = String.format(UPDATE_CUSTOMERS_RENTED_CAR_ID, customer.getRentedCarID(), customer.getId());
         try {
             dbClient.update(query);
         } catch (SQLException e) {
             System.out.println("Error updating customer." + e.getMessage());
+        }
+    }
+
+    public void returnCar(Customer customer) {
+        try {
+            dbClient.update(UPDATE_CUSTOMERS_RENTED_CAR_ID, null, customer.getId());
+            customer.setRentedCarID(null);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
